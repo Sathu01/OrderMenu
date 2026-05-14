@@ -43,6 +43,7 @@ func SetupRouter(db *mongo.Database) *gin.Engine {
 	//  PATCH  /menu/:id  → Update the status of menu avalable
 	//
 	r.GET("/menu", menuHandler.GetAllMenus)
+	r.GET("/menu/store", menuHandler.GetAllMenusForStore)
 	r.GET("/menu/:id", menuHandler.GetMenuByID)
 	r.POST("/orders", orderHandler.CreateOrders)
 	r.GET("/bills/:id", billHandler.GetBillByTableID)

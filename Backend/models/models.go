@@ -75,13 +75,15 @@ type OptionGroupWithOptions struct {
 }
 
 // OrderWithDetails is one line-item enriched with full Option objects
-// (instead of raw option ID strings).
+// (instead of raw option ID strings) and menu name.
 type OrderWithDetails struct {
-	ID      string   `json:"id"`
-	MenuID  int      `json:"menuId"`
-	Options []Option `json:"options"`
-	BillsID string   `json:"billsId"`
-	Count   int      `json:"count"`
+	ID        string   `json:"id"`
+	MenuID    int      `json:"menuId"`
+	MenuName  string   `json:"menuName"`
+	BasePrice float64  `json:"basePrice"`
+	Options   []Option `json:"options"`
+	BillsID   string   `json:"billsId"`
+	Count     int      `json:"count"`
 }
 
 // BillDetailsResponse is the response for GET /bills/:id.

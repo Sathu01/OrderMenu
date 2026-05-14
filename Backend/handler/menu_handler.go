@@ -31,6 +31,18 @@ func (h *MenuHandler) GetAllMenus(c *gin.Context) {
 	c.JSON(http.StatusOK, menus)
 }
 
+// GetAllMenusForStore godoc
+// GET /menu/store
+// Returns every menu item including unavailable ones (for store management).
+func (h *MenuHandler) GetAllMenusForStore(c *gin.Context) {
+	menus, err := h.repo.GetEveryMenu(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch menus"})
+		return
+	}
+	c.JSON(http.StatusOK, menus)
+}
+
 // GetMenuByID godoc
 // GET /menu/:id
 // Returns the menu item plus all of its option-groups (with nested options).
