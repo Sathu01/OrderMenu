@@ -84,8 +84,10 @@ go build -o bar-pos-server .
 
 ## 4. API Reference
 
+All endpoints return JSON.
+
 ### `GET /menu`
-Returns every available menu item.
+Returns every menu item that is currently available.
 
 **Response `200`**
 ```json
@@ -95,6 +97,7 @@ Returns every available menu item.
     "name": "Craft IPA Beer",
     "description": "Hoppy and citrusy local craft beer.",
     "basePrice": 180,
+    "url": "https://cdn.example.com/menu/beer-1.png",
     "category": "Beverage",
     "options": [1],
     "available": true
@@ -102,10 +105,8 @@ Returns every available menu item.
 ]
 ```
 
----
-
 ### `GET /menu/:id`
-Returns a menu item with its option-groups and nested options.
+Returns one menu item with its option groups and nested options.
 
 **Response `200`**
 ```json
@@ -113,27 +114,54 @@ Returns a menu item with its option-groups and nested options.
   "menu": {
     "id": 1,
     "name": "Craft IPA Beer",
+    "description": "Hoppy and citrusy local craft beer.",
     "basePrice": 180,
-    "options": [1]
+    "url": "https://cdn.example.com/menu/beer-1.png",
+    "category": "Beverage",
+    "options": [1],
+    "available": true
   },
   "optionGroups": [
     {
       "id": 1,
       "detail": "Size / Volume",
       "options": [
-        { "id": "OP1", "name": "Pint (500ml)", "price": 0,   "groupId": 1 },
-        { "id": "OP2", "name": "Jug (1.5L)",   "price": 250, "groupId": 1 }
+        { "id": "OP1", "name": "Pint (500ml)", "price": 0, "groupId": 1 },
+        { "id": "OP2", "name": "Jug (1.5L)", "price": 250, "groupId": 1 }
       ]
     }
   ]
 }
 ```
 
----
+### `PATCH /menu/:id`
+Updates the `available` field for a menu item.
+
+**Request body**
+```json
+{
+  "available": false
+}
+```
+
+**Response `200`**
+```json
+{
+  "id": 1,
+  "name": "Craft IPA Beer",
+  "description": "Hoppy and citrusy local craft beer.",
+  "basePrice": 180,
+  "url": "https://cdn.example.com/menu/beer-1.png",
+  "category": "Beverage",
+  "options": [1],
+  "available": false
+}
+```
 
 ### `POST /orders`
+Creates order line items and either opens a new bill or reuses an existing one.
 
-**Case 1 — first order (no open bill yet)**
+**Request body - new bill**
 ```json
 {
   "tableId": "T1",
@@ -145,7 +173,7 @@ Returns a menu item with its option-groups and nested options.
 }
 ```
 
-**Case 2 — adding to an existing open bill**
+**Request body - add to existing bill**
 ```json
 {
   "tableId": "T1",
@@ -158,21 +186,21 @@ Returns a menu item with its option-groups and nested options.
 
 **Response `201`**
 ```json
-{ "billsId": "B-a3f9c12d" }
+{
+  "billsId": "B-a3f9c12d"
+}
 ```
 
 **Error responses**
 
 | Status | Reason |
 |---|---|
-| `400` | tableId / billsId mismatch, or bill already paid |
-| `404` | billsId not found in DB |
-| `409` | Bill status is "processing" — payment in progress |
-
----
+| `400` | invalid body, tableId mismatch, or bill already paid |
+| `404` | billsId or bill not found |
+| `409` | bill is already in `processing` status |
 
 ### `GET /bills/:id`
-Returns the bill and all enriched orders (options fully hydrated).
+Returns one bill by bill ID with all of its orders and hydrated option objects.
 
 **Response `200`**
 ```json
@@ -197,6 +225,75 @@ Returns the bill and all enriched orders (options fully hydrated).
 }
 ```
 
+### `GET /bills/processing`
+Returns every bill whose status is `processing`, together with each bill's orders and full option objects.
+
+**Response `200`**
+```json
+[
+  {
+    "bill": {
+      "id": "B2",
+      "createDate": "2026-05-14T21:00:00Z",
+      "tableId": "T3",
+      "status": "processing"
+    },
+    "orders": [
+      {
+        "id": "O03",
+        "menuId": 1,
+        "options": [
+          {
+            "id": "OP2",
+            "name": "Jug (1.5L)",
+            "price": 250,
+            "groupId": 1
+          }
+        ],
+        "billsId": "B2",
+        "count": 1
+      }
+    ]
+  }
+]
+```
+
+### `PATCH /bills/user/:id`
+Changes a bill status to `processing`.
+
+**Response `200`**
+```json
+{
+  "id": "B2",
+  "createDate": "2026-05-14T21:00:00Z",
+  "tableId": "T3",
+  "status": "processing"
+}
+```
+
+### `PATCH /bills/store/:id`
+Changes a bill status to `paid`.
+
+**Response `200`**
+```json
+{
+  "id": "B2",
+  "createDate": "2026-05-14T21:00:00Z",
+  "tableId": "T3",
+  "status": "paid"
+}
+```
+
+### `GET /health`
+Simple health check for the backend.
+
+**Response `200`**
+```json
+{
+  "status": "ok"
+}
+```
+
 ---
 
 ## 5. MongoDB Indexes Created on Startup
@@ -215,9 +312,13 @@ Returns the bill and all enriched orders (options fully hydrated).
 |---|---|---|
 | `GET /menu` | 1 | Single `find` on menus |
 | `GET /menu/:id` | 3 | find menu → `$in` groups → `$in` options |
+| `PATCH /menu/:id` | 2 | update menu → re-fetch updated document |
 | `POST /orders` (case 1, new) | 3 | find active bill → insert bill → insert orders |
 | `POST /orders` (case 1, existing) | 2 | find active bill → insert orders |
 | `POST /orders` (case 2) | 2 | find bill by ID → insert orders |
 | `GET /bills/:id` | 3 | find bill → find orders → `$in` options |
+| `GET /bills/processing` | 3N | for each bill: find orders → `$in` options |
+| `PATCH /bills/user/:id` | 2 | update bill → re-fetch updated document |
+| `PATCH /bills/store/:id` | 2 | update bill → re-fetch updated document |
 
 No N+1 queries anywhere — all enrichment uses `$in` batching.
