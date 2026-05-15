@@ -82,6 +82,56 @@ go build -o bar-pos-server .
 
 ---
 
+## 3.1. Test From a Phone on the Same Wi-Fi
+
+Use this when opening the customer QR/table page from a mobile phone.
+
+1. Find the PC Wi-Fi IP:
+
+```powershell
+ipconfig
+```
+
+Use the IPv4 address under `Wireless LAN adapter Wi-Fi`. Do not use `localhost` on the phone.
+
+2. Create `Frontend/.env.local`:
+
+```env
+NEXT_PUBLIC_API_URL=http://YOUR_PC_WIFI_IP:8080
+```
+
+Example:
+
+```env
+NEXT_PUBLIC_API_URL=http://172.25.36.193:8080
+```
+
+3. Start the backend:
+
+```bash
+cd Backend
+go run main.go
+```
+
+4. Start the frontend for LAN access:
+
+```bash
+cd Frontend
+pnpm dev:lan
+```
+
+5. Open the customer table URL on the phone:
+
+```text
+http://YOUR_PC_WIFI_IP:3000/table/T1
+http://YOUR_PC_WIFI_IP:3000/table/T2
+http://YOUR_PC_WIFI_IP:3000/table/T3
+```
+
+If the phone says the connection timed out, check that the phone and PC are on the same Wi-Fi, that VPN/private DNS is disabled, and that Windows Firewall allows ports `3000` and `8080` for Node.js and the Go backend.
+
+---
+
 ## 4. Frontend Page Reference
 
 The frontend is a Next.js app in `Frontend/`. It uses `NEXT_PUBLIC_API_URL` when set, otherwise it calls `http://localhost:8080`.
