@@ -1,0 +1,122 @@
+[
+  {
+    "_id": 1,
+    "name": "Craft IPA Beer",
+    "description": "Crisp local IPA with citrus aroma and a clean bitter finish.",
+    "basePrice": 180,
+    "url": "https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=900&q=80",
+    "category": "Beverage",
+    "options": [1],
+    "available": true
+  },
+  {
+    "_id": 2,
+    "name": "Lager Beer",
+    "description": "Light golden lager, easy drinking and served ice cold.",
+    "basePrice": 140,
+    "url": "https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?auto=format&fit=crop&w=900&q=80",
+    "category": "Beverage",
+    "options": [1],
+    "available": true
+  },
+  {
+    "_id": 3,
+    "name": "Highball",
+    "description": "Whisky, soda, lemon peel, and plenty of fizz.",
+    "basePrice": 220,
+    "url": "https://images.unsplash.com/photo-1569529465841-dfecdab7503b?auto=format&fit=crop&w=900&q=80",
+    "category": "Beverage",
+    "options": [2],
+    "available": true
+  },
+  {
+    "_id": 4,
+    "name": "Mojito",
+    "description": "Rum, lime, mint, soda, and a bright refreshing finish.",
+    "basePrice": 240,
+    "url": "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?auto=format&fit=crop&w=900&q=80",
+    "category": "Beverage",
+    "options": [2, 3],
+    "available": true
+  },
+  {
+    "_id": 5,
+    "name": "Thai Milk Tea",
+    "description": "Strong black tea with milk, smooth sweetness, and orange tea aroma.",
+    "basePrice": 95,
+    "url": "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?auto=format&fit=crop&w=900&q=80",
+    "category": "Beverage",
+    "options": [2, 3],
+    "available": true
+  },
+  {
+    "_id": 6,
+    "name": "Lime Soda",
+    "description": "Fresh lime, soda water, and a clean sparkling finish.",
+    "basePrice": 85,
+    "url": "https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?auto=format&fit=crop&w=900&q=80",
+    "category": "Beverage",
+    "options": [2, 3],
+    "available": true
+  },
+  {
+    "_id": 7,
+    "name": "Crispy Potato Wedges",
+    "description": "Golden potato wedges with a crisp outside and fluffy center.",
+    "basePrice": 120,
+    "url": "https://images.unsplash.com/photo-1639024471283-03518883512d?auto=format&fit=crop&w=900&q=80",
+    "category": "Snack",
+    "options": [5, 6],
+    "available": true
+  },
+  {
+    "_id": 8,
+    "name": "Spicy Buffalo Wings",
+    "description": "Fried chicken wings tossed in a buttery hot sauce.",
+    "basePrice": 180,
+    "url": "https://images.unsplash.com/photo-1608039755401-742074f0548d?auto=format&fit=crop&w=900&q=80",
+    "category": "Snack",
+    "options": [4, 5],
+    "available": true
+  },
+  {
+    "_id": 9,
+    "name": "Nachos Supreme",
+    "description": "Tortilla chips with cheese, salsa, jalapeno, and sour cream.",
+    "basePrice": 165,
+    "url": "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?auto=format&fit=crop&w=900&q=80",
+    "category": "Snack",
+    "options": [4, 6],
+    "available": true
+  },
+  {
+    "_id": 10,
+    "name": "Calamari Rings",
+    "description": "Crispy squid rings with lemon and dipping sauce.",
+    "basePrice": 190,
+    "url": "https://images.unsplash.com/photo-1625938146369-adc83368b2f3?auto=format&fit=crop&w=900&q=80",
+    "category": "Snack",
+    "options": [5],
+    "available": true
+  },
+  {
+    "_id": 11,
+    "name": "Garlic Bread",
+    "description": "Toasted baguette with garlic butter and herbs.",
+    "basePrice": 95,
+    "url": "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?auto=format&fit=crop&w=900&q=80",
+    "category": "Snack",
+    "options": [6],
+    "available": true
+  },
+  {
+    "_id": 12,
+    "name": "Mini Burger Sliders",
+    "description": "Three small beef sliders with cheese and house sauce.",
+    "basePrice": 220,
+    "url": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=80",
+    "category": "Snack",
+    "options": [4, 6],
+    "available": true
+  }
+]

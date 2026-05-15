@@ -1,0 +1,26 @@
+[
+  {
+    "_id": 1,
+    "detail": "Size / Volume"
+  },
+  {
+    "_id": 2,
+    "detail": "Ice Level"
+  },
+  {
+    "_id": 3,
+    "detail": "Sweetness"
+  },
+  {
+    "_id": 4,
+    "detail": "Spice Level"
+  },
+  {
+    "_id": 5,
+    "detail": "Sauce"
+  },
+  {
+    "_id": 6,
+    "detail": "Add-ons"
+  }
+]

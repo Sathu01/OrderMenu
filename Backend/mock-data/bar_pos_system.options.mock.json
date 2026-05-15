@@ -1,0 +1,122 @@
+[
+  {
+    "_id": "OP1",
+    "name": "Glass",
+    "price": 0,
+    "groupId": 1
+  },
+  {
+    "_id": "OP2",
+    "name": "Pint",
+    "price": 50,
+    "groupId": 1
+  },
+  {
+    "_id": "OP3",
+    "name": "Jug",
+    "price": 250,
+    "groupId": 1
+  },
+  {
+    "_id": "OP4",
+    "name": "No Ice",
+    "price": 0,
+    "groupId": 2
+  },
+  {
+    "_id": "OP5",
+    "name": "Less Ice",
+    "price": 0,
+    "groupId": 2
+  },
+  {
+    "_id": "OP6",
+    "name": "Regular Ice",
+    "price": 0,
+    "groupId": 2
+  },
+  {
+    "_id": "OP7",
+    "name": "Extra Ice",
+    "price": 0,
+    "groupId": 2
+  },
+  {
+    "_id": "OP8",
+    "name": "Less Sweet",
+    "price": 0,
+    "groupId": 3
+  },
+  {
+    "_id": "OP9",
+    "name": "Regular Sweet",
+    "price": 0,
+    "groupId": 3
+  },
+  {
+    "_id": "OP10",
+    "name": "Extra Sweet",
+    "price": 10,
+    "groupId": 3
+  },
+  {
+    "_id": "OP11",
+    "name": "Mild",
+    "price": 0,
+    "groupId": 4
+  },
+  {
+    "_id": "OP12",
+    "name": "Medium",
+    "price": 0,
+    "groupId": 4
+  },
+  {
+    "_id": "OP13",
+    "name": "Hot",
+    "price": 0,
+    "groupId": 4
+  },
+  {
+    "_id": "OP14",
+    "name": "Volcano",
+    "price": 10,
+    "groupId": 4
+  },
+  {
+    "_id": "OP15",
+    "name": "BBQ",
+    "price": 0,
+    "groupId": 5
+  },
+  {
+    "_id": "OP16",
+    "name": "Honey Mustard",
+    "price": 0,
+    "groupId": 5
+  },
+  {
+    "_id": "OP17",
+    "name": "Cheese Dip",
+    "price": 25,
+    "groupId": 5
+  },
+  {
+    "_id": "OP18",
+    "name": "Extra Cheese",
+    "price": 30,
+    "groupId": 6
+  },
+  {
+    "_id": "OP19",
+    "name": "Truffle Oil",
+    "price": 50,
+    "groupId": 6
+  },
+  {
+    "_id": "OP20",
+    "name": "Extra Bacon",
+    "price": 45,
+    "groupId": 6
+  }
+]
