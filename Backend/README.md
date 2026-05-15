@@ -337,36 +337,49 @@ Returns every bill whose status is `processing`, together with each bill's order
 ```
 
 ### `GET /bills/paid`
-Returns every bill whose status is `paid`, together with each bill's orders and full option objects.
+Returns paid bills with pagination, together with each bill's orders and full option objects.
+
+Query parameters:
+
+| Name | Default | Notes |
+|---|---:|---|
+| `page` | `1` | Page number, starting at 1 |
+| `pageSize` | `10` | Bills per page, capped at 100 |
 
 **Response `200`**
 ```json
-[
-  {
-    "bill": {
-      "id": "B2",
-      "createDate": "2026-05-14T21:00:00Z",
-      "tableId": "T3",
-      "status": "paid"
-    },
-    "orders": [
-      {
-        "id": "O03",
-        "menuId": 1,
-        "options": [
-          {
-            "id": "OP2",
-            "name": "Jug (1.5L)",
-            "price": 250,
-            "groupId": 1
-          }
-        ],
-        "billsId": "B2",
-        "count": 1
-      }
-    ]
-  }
-]
+{
+  "data": [
+    {
+      "bill": {
+        "id": "B2",
+        "createDate": "2026-05-14T21:00:00Z",
+        "tableId": "T3",
+        "status": "paid"
+      },
+      "orders": [
+        {
+          "id": "O03",
+          "menuId": 1,
+          "options": [
+            {
+              "id": "OP2",
+              "name": "Jug (1.5L)",
+              "price": 250,
+              "groupId": 1
+            }
+          ],
+          "billsId": "B2",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "page": 1,
+  "pageSize": 10,
+  "total": 25,
+  "pageCount": 3
+}
 ```
 
 ### `PATCH /bills/user/:id`

@@ -80,7 +80,7 @@ export default function StoreMenuPage() {
   }, [items, query])
 
   return (
-    <main className="px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+    <main className="w-full max-w-none px-4 py-6 sm:px-6 lg:px-8">
       <header className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Menu management</h1>
@@ -88,7 +88,7 @@ export default function StoreMenuPage() {
             Toggle items on or off the live customer menu.
           </p>
         </div>
-        <div className="relative w-full max-w-md">
+        <div className="relative w-full lg:max-w-xl">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
             type="search"
@@ -102,8 +102,8 @@ export default function StoreMenuPage() {
       </header>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
             <Card key={i} className="overflow-hidden animate-pulse">
               <div className="aspect-[16/10] bg-muted" />
               <div className="p-4 space-y-2">
@@ -114,7 +114,7 @@ export default function StoreMenuPage() {
           ))}
         </div>
       ) : (
-        <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((item) => (
             <Card
               key={item.id}
@@ -125,7 +125,7 @@ export default function StoreMenuPage() {
                   src={item.url || "/placeholder.svg"}
                   alt={item.name}
                   fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, (max-width: 1536px) 33vw, 25vw"
                   className="object-cover"
                 />
                 {!item.available && (

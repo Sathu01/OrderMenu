@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Download, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -53,6 +53,14 @@ type ApiBill = {
 type BillWithOrders = {
   bill: ApiBill
   orders: ApiOrder[]
+}
+
+type PaidBillsResponse = {
+  data: BillWithOrders[]
+  page: number
+  pageSize: number
+  total: number
+  pageCount: number
 }
 
 function calcTotal(orders: ApiOrder[]): number {
@@ -108,35 +116,31 @@ export default function BillHistoryPage() {
   const [bills, setBills] = useState<BillWithOrders[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
+  const [pageCount, setPageCount] = useState(1)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const fetchBills = useCallback(async () => {
     try {
-      const res = await fetch(`${BASE}/bills/paid`)
+      const res = await fetch(`${BASE}/bills/paid?page=${page}&pageSize=${PAGE_SIZE}`)
       if (!res.ok) return
-      const data: unknown = await res.json()
-      setBills(Array.isArray(data) ? (data as BillWithOrders[]) : [])
+      const data = (await res.json()) as PaidBillsResponse
+      setBills(Array.isArray(data.data) ? data.data : [])
+      setTotal(data.total ?? 0)
+      setPageCount(Math.max(1, data.pageCount ?? 1))
     } catch {
       // Keep last known state on network error.
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [page])
 
   useEffect(() => {
     fetchBills()
   }, [fetchBills])
 
-  const paid = useMemo(() => {
-    return [...bills].sort(
-      (a, b) => new Date(b.bill.createDate).getTime() - new Date(a.bill.createDate).getTime(),
-    )
-  }, [bills])
-
-  const pageCount = Math.max(1, Math.ceil(paid.length / PAGE_SIZE))
   const safePage = Math.min(page, pageCount)
-  const slice = paid.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
-  const selected = paid.find(({ bill }) => bill.id === selectedId) ?? null
+  const selected = bills.find(({ bill }) => bill.id === selectedId) ?? null
 
   return (
     <main className="px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
@@ -149,7 +153,7 @@ export default function BillHistoryPage() {
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="h-10 rounded-lg px-3 font-mono">
-            {paid.length} paid
+            {total} paid
           </Badge>
           <Button
             variant="outline"
@@ -183,14 +187,14 @@ export default function BillHistoryPage() {
                   Loading paid bills...
                 </TableCell>
               </TableRow>
-            ) : slice.length === 0 ? (
+            ) : bills.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground py-10">
                   No paid bills yet.
                 </TableCell>
               </TableRow>
             ) : (
-              slice.map(({ bill, orders }) => (
+              bills.map(({ bill, orders }) => (
                 <TableRow
                   key={bill.id}
                   role="button"
@@ -220,7 +224,7 @@ export default function BillHistoryPage() {
         </Table>
       </Card>
 
-      {paid.length > PAGE_SIZE && (
+      {total > PAGE_SIZE && (
         <div className="mt-4 flex items-center justify-between text-sm">
           <p className="text-muted-foreground">
             Page {safePage} of {pageCount}

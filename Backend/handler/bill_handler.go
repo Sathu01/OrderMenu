@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"context"
 	"net/http"
+	"strconv"
 
 	"bar-pos-backend/models"
 	"bar-pos-backend/repository"
@@ -163,7 +165,37 @@ func (h *BillHandler) GetProcessBills(c *gin.Context) {
 // GetPaidBills returns every bill currently in the "paid" state
 // along with their enriched orders (options embedded).
 func (h *BillHandler) GetPaidBills(c *gin.Context) {
-	h.getBillsByStatus(c, models.BillStatusPaid)
+	ctx := c.Request.Context()
+	page := parsePositiveInt64(c.DefaultQuery("page", "1"), 1)
+	pageSize := parsePositiveInt64(c.DefaultQuery("pageSize", "10"), 10)
+	if pageSize > 100 {
+		pageSize = 100
+	}
+
+	bills, total, err := h.billRepo.FindByStatusPaginated(ctx, models.BillStatusPaid, page, pageSize)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch bills"})
+		return
+	}
+
+	responses, err := h.buildBillDetailsResponses(ctx, bills)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	pageCount := int64(1)
+	if total > 0 {
+		pageCount = (total + pageSize - 1) / pageSize
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data":      responses,
+		"page":      page,
+		"pageSize":  pageSize,
+		"total":     total,
+		"pageCount": pageCount,
+	})
 }
 
 func (h *BillHandler) getBillsByStatus(c *gin.Context, status string) {
@@ -175,19 +207,26 @@ func (h *BillHandler) getBillsByStatus(c *gin.Context, status string) {
 		return
 	}
 
-	// Assemble response: one BillDetailsResponse per bill
+	responses, err := h.buildBillDetailsResponses(ctx, bills)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, responses)
+}
+
+func (h *BillHandler) buildBillDetailsResponses(ctx context.Context, bills []models.Bill) ([]models.BillDetailsResponse, error) {
 	responses := make([]models.BillDetailsResponse, 0, len(bills))
 	for _, b := range bills {
 		orders, err := h.orderRepo.FindByBillsID(ctx, b.ID)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch orders"})
-			return
+			return nil, err
 		}
 
 		enrichedOrders, err := h.orderRepo.EnrichOrdersWithOptions(ctx, orders)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to enrich orders with options"})
-			return
+			return nil, err
 		}
 
 		responses = append(responses, models.BillDetailsResponse{
@@ -196,5 +235,13 @@ func (h *BillHandler) getBillsByStatus(c *gin.Context, status string) {
 		})
 	}
 
-	c.JSON(http.StatusOK, responses)
+	return responses, nil
+}
+
+func parsePositiveInt64(value string, fallback int64) int64 {
+	parsed, err := strconv.ParseInt(value, 10, 64)
+	if err != nil || parsed < 1 {
+		return fallback
+	}
+	return parsed
 }

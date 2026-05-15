@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { Trash2, ShoppingCart, ArrowLeft } from "lucide-react"
+import { Trash2, ShoppingCart, ArrowLeft, Pencil } from "lucide-react"
 import { toast } from "sonner"
 import { useState } from "react"
 import { useApp } from "@/contexts/app-context"
@@ -83,7 +83,18 @@ export default function CartPage() {
           <ul className="space-y-3">
             {cart.map((item) => (
               <li key={item.lineId}>
-            <Card className="p-4 flex items-start justify-between gap-3">
+                <Card
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => router.push(`/menu/${item.menuItemId}?edit=${encodeURIComponent(item.lineId)}`)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault()
+                      router.push(`/menu/${item.menuItemId}?edit=${encodeURIComponent(item.lineId)}`)
+                    }
+                  }}
+                  className="p-4 flex items-start justify-between gap-3 cursor-pointer transition-all hover:border-primary hover:shadow-md"
+                >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <p className="font-semibold leading-tight">
@@ -104,11 +115,18 @@ export default function CartPage() {
                         ))}
                       </ul>
                     )}
+                    <p className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary">
+                      <Pencil className="size-3" />
+                      Tap to edit
+                    </p>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => removeFromCart(item.lineId)}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      removeFromCart(item.lineId)
+                    }}
                     aria-label={`Remove ${item.name}`}
                   >
                     <Trash2 className="size-4" />

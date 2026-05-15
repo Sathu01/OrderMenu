@@ -11,6 +11,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // BillRepository encapsulates all CRUD operations on the bills collection.
@@ -105,6 +106,47 @@ func (r *BillRepository) FindByStatus(ctx context.Context, status string) ([]mod
 		bills = []models.Bill{}
 	}
 	return bills, nil
+}
+
+// FindByStatusPaginated returns one page of bills matching the provided status.
+func (r *BillRepository) FindByStatusPaginated(
+	ctx context.Context,
+	status string,
+	page int64,
+	pageSize int64,
+) ([]models.Bill, int64, error) {
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 {
+		pageSize = 10
+	}
+
+	filter := bson.M{"status": status}
+	total, err := r.col.CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	findOptions := options.Find().
+		SetSort(bson.D{{Key: "createDate", Value: -1}}).
+		SetSkip((page - 1) * pageSize).
+		SetLimit(pageSize)
+
+	cursor, err := r.col.Find(ctx, filter, findOptions)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer cursor.Close(ctx)
+
+	var bills []models.Bill
+	if err := cursor.All(ctx, &bills); err != nil {
+		return nil, 0, err
+	}
+	if bills == nil {
+		bills = []models.Bill{}
+	}
+	return bills, total, nil
 }
 
 // newBillID generates a collision-resistant bill ID like "B-a3f9c12d".

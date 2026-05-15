@@ -21,6 +21,7 @@ type AppContextValue = {
   // cart
   cart: CartItem[]
   addToCart: (item: CartItem) => void
+  updateCartItem: (lineId: string, item: CartItem) => void
   removeFromCart: (lineId: string) => void
   clearCart: () => void
   cartTotal: number
@@ -151,6 +152,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     cart,
     addToCart: (item) => setCart((c) => [...c, item]),
+    updateCartItem: (lineId, item) =>
+      setCart((c) => c.map((cartItem) => (cartItem.lineId === lineId ? item : cartItem))),
     removeFromCart: (lineId) => setCart((c) => c.filter((i) => i.lineId !== lineId)),
     clearCart: () => setCart([]),
     cartTotal,

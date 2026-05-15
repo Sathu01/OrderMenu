@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useRouter, useParams } from "next/navigation"
+import { useRouter, useParams, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { ChevronLeft, Minus, Plus } from "lucide-react"
 import { toast } from "sonner"
@@ -16,9 +16,11 @@ const NO_OPTION_VALUE = "__none__"
 
 export default function MenuDetailPage() {
   const params = useParams()
+  const searchParams = useSearchParams()
   const id = params?.id as string | undefined
+  const editLineId = searchParams.get("edit")
   const router = useRouter()
-  const { addToCart } = useApp()
+  const { addToCart, cart, updateCartItem } = useApp()
   const [item, setItem] = useState<MenuItem | null>(null)
 
   // selected: groupId -> choiceId[]  (max one choice per option group)
@@ -62,12 +64,28 @@ export default function MenuDetailPage() {
   // initialize selected when item loads
   useEffect(() => {
     if (!item) return
+    const editItem = editLineId
+      ? cart.find((cartItem) => cartItem.lineId === editLineId && cartItem.menuItemId === item.id)
+      : null
+
+    if (editItem) {
+      const nextSelected: Record<string, string[]> = {}
+      for (const g of item.optionGroups) {
+        const selectedOption = editItem.selectedOptions.find((option) => option.groupId === g.id)
+        nextSelected[g.id] = selectedOption ? [selectedOption.choiceId] : []
+      }
+      setSelected(nextSelected)
+      setQty(editItem.quantity)
+      return
+    }
+
     const init: Record<string, string[]> = {}
     for (const g of item.optionGroups) {
       init[g.id] = g.required && g.choices[0] ? [g.choices[0].id] : []
     }
     setSelected(init)
-  }, [item])
+    setQty(1)
+  }, [cart, editLineId, item])
 
   const unitPrice = useMemo(() => {
     if (!item) return 0
@@ -94,9 +112,13 @@ export default function MenuDetailPage() {
 
   function handleAdd() {
     if (!item) return
+    const editingCartItem = editLineId
+      ? cart.find((cartItem) => cartItem.lineId === editLineId && cartItem.menuItemId === item.id)
+      : null
     const selectedOptions = item.optionGroups.flatMap((g) =>
-      (selected[g.id] ?? []).map((choiceId) => {
-        const c = g.choices.find((x) => x.id === choiceId)!
+      (selected[g.id] ?? []).flatMap((choiceId) => {
+        const c = g.choices.find((x) => x.id === choiceId)
+        if (!c) return []
         return {
           groupId: g.id,
           groupName: g.name,
@@ -107,13 +129,19 @@ export default function MenuDetailPage() {
       }),
     )
     const cartItem: CartItem = {
-      lineId: `${item.id}-${Date.now()}`,
+      lineId: editingCartItem?.lineId ?? `${item.id}-${Date.now()}`,
       menuItemId: item.id,
       name: item.name,
       basePrice: item.price,
       quantity: qty,
       selectedOptions,
       unitPrice,
+    }
+    if (editingCartItem) {
+      updateCartItem(editingCartItem.lineId, cartItem)
+      toast.success(`Updated ${item.name}`)
+      router.push("/cart")
+      return
     }
     addToCart(cartItem)
     toast.success(`Added ${qty} × ${item.name}`)
@@ -139,6 +167,11 @@ export default function MenuDetailPage() {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <h1 className="text-2xl font-semibold tracking-tight">{item.name}</h1>
+            {editLineId && (
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-primary">
+                Editing cart item
+              </p>
+            )}
             <p className="text-muted-foreground mt-1 leading-relaxed">{item.description}</p>
           </div>
           <p className="shrink-0 rounded-lg bg-primary/10 px-3 py-2 text-base font-bold tabular-nums text-primary">
@@ -227,9 +260,16 @@ export default function MenuDetailPage() {
             </Button>
           </div>
 
-          <Button size="lg" className="flex-1" onClick={handleAdd}>
+          {editLineId && (
+            <Button size="lg" className="flex-1" onClick={handleAdd}>
+              Update cart · {formatPrice(unitPrice * qty)}
+            </Button>
+          )}
+          {!editLineId && (
+            <Button size="lg" className="flex-1" onClick={handleAdd}>
             Add to cart · {formatPrice(unitPrice * qty)}
-          </Button>
+            </Button>
+          )}
         </div>
       </div>
     </main>
