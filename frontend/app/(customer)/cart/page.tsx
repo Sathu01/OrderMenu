@@ -12,7 +12,7 @@ import { formatPrice } from "@/lib/format"
 export default function CartPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
-  const { cart, cartTotal, removeFromCart, clearCart, session } = useApp()
+  const { cart, cartTotal, removeFromCart, clearCart, session, setActiveBillId } = useApp()
 
   async function handleOrder() {
     if (cart.length === 0) {
@@ -37,9 +37,15 @@ export default function CartPage() {
           orders,
         }),
       })
+      if (response.status === 409) {
+        toast.error("This table is already waiting for payment")
+        router.replace("/payment")
+        return
+      }
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const data = (await response.json()) as { billsId: string }
       toast.success(`Order sent · Bill ${data.billsId}`)
+      setActiveBillId(data.billsId)
       clearCart()
       router.push(`/bills`)
     } catch (err) {
@@ -123,4 +129,3 @@ export default function CartPage() {
     </main>
   )
 }
-

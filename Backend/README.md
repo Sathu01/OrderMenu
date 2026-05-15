@@ -258,6 +258,39 @@ Returns every bill whose status is `processing`, together with each bill's order
 ]
 ```
 
+### `GET /bills/paid`
+Returns every bill whose status is `paid`, together with each bill's orders and full option objects.
+
+**Response `200`**
+```json
+[
+  {
+    "bill": {
+      "id": "B2",
+      "createDate": "2026-05-14T21:00:00Z",
+      "tableId": "T3",
+      "status": "paid"
+    },
+    "orders": [
+      {
+        "id": "O03",
+        "menuId": 1,
+        "options": [
+          {
+            "id": "OP2",
+            "name": "Jug (1.5L)",
+            "price": 250,
+            "groupId": 1
+          }
+        ],
+        "billsId": "B2",
+        "count": 1
+      }
+    ]
+  }
+]
+```
+
 ### `PATCH /bills/user/:id`
 Changes a bill status to `processing`.
 
@@ -318,6 +351,7 @@ Simple health check for the backend.
 | `POST /orders` (case 2) | 2 | find bill by ID → insert orders |
 | `GET /bills/:id` | 3 | find bill → find orders → `$in` options |
 | `GET /bills/processing` | 3N | for each bill: find orders → `$in` options |
+| `GET /bills/paid` | 3N | for each bill: find orders → `$in` options |
 | `PATCH /bills/user/:id` | 2 | update bill → re-fetch updated document |
 | `PATCH /bills/store/:id` | 2 | update bill → re-fetch updated document |
 

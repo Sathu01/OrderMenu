@@ -74,11 +74,11 @@ func (h *BillHandler) GetBillByTableID(c *gin.Context) {
 	// ── Step 1: fetch the bill ───────────────────────────────────────────────
 	bill, err := h.billRepo.FindActiveBillByTableID(ctx, tableID)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			c.JSON(http.StatusNotFound, gin.H{"error": "bill not found"})
-			return
-		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch bill"})
+		return
+	}
+	if bill == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "bill not found"})
 		return
 	}
 
@@ -107,7 +107,7 @@ func (h *BillHandler) ChangeStatusToProcessing(c *gin.Context) {
 	billID := c.Param("id")
 	ctx := c.Request.Context()
 
-	bill, err := h.billRepo.UpdateStatusByID(ctx, billID, "processing")
+	bill, err := h.billRepo.UpdateStatusByID(ctx, billID, models.BillStatusProcessing)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			c.JSON(http.StatusNotFound, gin.H{"error": "bill not found"})
@@ -124,7 +124,7 @@ func (h *BillHandler) ChangeStatusToPaid(c *gin.Context) {
 	billID := c.Param("id")
 	ctx := c.Request.Context()
 
-	bill, err := h.billRepo.UpdateStatusByID(ctx, billID, "paid")
+	bill, err := h.billRepo.UpdateStatusByID(ctx, billID, models.BillStatusPaid)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			c.JSON(http.StatusNotFound, gin.H{"error": "bill not found"})
@@ -140,9 +140,19 @@ func (h *BillHandler) ChangeStatusToPaid(c *gin.Context) {
 // GetProcessBills returns every bill currently in the "processing" state
 // along with their enriched orders (options embedded).
 func (h *BillHandler) GetProcessBills(c *gin.Context) {
+	h.getBillsByStatus(c, models.BillStatusProcessing)
+}
+
+// GetPaidBills returns every bill currently in the "paid" state
+// along with their enriched orders (options embedded).
+func (h *BillHandler) GetPaidBills(c *gin.Context) {
+	h.getBillsByStatus(c, models.BillStatusPaid)
+}
+
+func (h *BillHandler) getBillsByStatus(c *gin.Context, status string) {
 	ctx := c.Request.Context()
 
-	bills, err := h.billRepo.FindByStatus(ctx, "processing")
+	bills, err := h.billRepo.FindByStatus(ctx, status)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch bills"})
 		return

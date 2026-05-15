@@ -8,10 +8,11 @@ import { toast } from "sonner"
 import { useApp } from "@/contexts/app-context"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { formatPrice } from "@/lib/format"
 import type { CartItem, MenuItem } from "@/lib/types"
+
+const NO_OPTION_VALUE = "__none__"
 
 export default function MenuDetailPage() {
   const params = useParams()
@@ -20,7 +21,7 @@ export default function MenuDetailPage() {
   const { addToCart } = useApp()
   const [item, setItem] = useState<MenuItem | null>(null)
 
-  // selected: groupId -> choiceId[]  (single string in array for required radio groups)
+  // selected: groupId -> choiceId[]  (max one choice per option group)
   const [selected, setSelected] = useState<Record<string, string[]>>({})
   const [qty, setQty] = useState(1)
 
@@ -148,62 +149,44 @@ export default function MenuDetailPage() {
                 )}
               </h2>
 
-              {group.required ? (
-                <RadioGroup
-                  value={selected[group.id]?.[0] ?? ""}
-                  onValueChange={(v) => setSelected((s) => ({ ...s, [group.id]: [v] }))}
-                  className="space-y-2"
-                >
-                  {group.choices.map((c) => (
-                    <Label
-                      key={c.id}
-                      htmlFor={`${group.id}-${c.id}`}
-                      className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3 cursor-pointer hover:border-primary has-[[data-state=checked]]:border-primary"
-                    >
-                      <div className="flex items-center gap-3">
-                        <RadioGroupItem id={`${group.id}-${c.id}`} value={c.id} />
-                        <span className="text-sm font-medium">{c.label}</span>
-                      </div>
-                      {c.priceDelta > 0 && (
-                        <span className="text-sm text-muted-foreground">+{formatPrice(c.priceDelta)}</span>
-                      )}
-                    </Label>
-                  ))}
-                </RadioGroup>
-              ) : (
-                <div className="space-y-2">
-                  {group.choices.map((c) => {
-                    const checked = (selected[group.id] ?? []).includes(c.id)
-                    return (
-                      <Label
-                        key={c.id}
-                        htmlFor={`${group.id}-${c.id}`}
-                        className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3 cursor-pointer hover:border-primary has-[[data-state=checked]]:border-primary"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Checkbox
-                            id={`${group.id}-${c.id}`}
-                            checked={checked}
-                            onCheckedChange={(v) =>
-                              setSelected((s) => {
-                                const curr = s[group.id] ?? []
-                                return {
-                                  ...s,
-                                  [group.id]: v ? [...curr, c.id] : curr.filter((x) => x !== c.id),
-                                }
-                              })
-                            }
-                          />
-                          <span className="text-sm font-medium">{c.label}</span>
-                        </div>
-                        {c.priceDelta > 0 && (
-                          <span className="text-sm text-muted-foreground">+{formatPrice(c.priceDelta)}</span>
-                        )}
-                      </Label>
-                    )
-                  })}
-                </div>
-              )}
+              <RadioGroup
+                value={selected[group.id]?.[0] ?? NO_OPTION_VALUE}
+                onValueChange={(value) =>
+                  setSelected((s) => ({
+                    ...s,
+                    [group.id]: value === NO_OPTION_VALUE ? [] : [value],
+                  }))
+                }
+                className="space-y-2"
+              >
+                {!group.required && (
+                  <Label
+                    htmlFor={`${group.id}-none`}
+                    className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3 cursor-pointer hover:border-primary has-[[data-state=checked]]:border-primary"
+                  >
+                    <div className="flex items-center gap-3">
+                      <RadioGroupItem id={`${group.id}-none`} value={NO_OPTION_VALUE} />
+                      <span className="text-sm font-medium">No option</span>
+                    </div>
+                  </Label>
+                )}
+
+                {group.choices.map((c) => (
+                  <Label
+                    key={c.id}
+                    htmlFor={`${group.id}-${c.id}`}
+                    className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3 cursor-pointer hover:border-primary has-[[data-state=checked]]:border-primary"
+                  >
+                    <div className="flex items-center gap-3">
+                      <RadioGroupItem id={`${group.id}-${c.id}`} value={c.id} />
+                      <span className="text-sm font-medium">{c.label}</span>
+                    </div>
+                    {c.priceDelta > 0 && (
+                      <span className="text-sm text-muted-foreground">+{formatPrice(c.priceDelta)}</span>
+                    )}
+                  </Label>
+                ))}
+              </RadioGroup>
             </section>
           ))}
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
 import type { Bill, CartItem, MenuItem } from "@/lib/types"
 import { INITIAL_MENU } from "@/lib/menu-data"
 
@@ -10,6 +10,8 @@ type SessionState = {
 }
 
 type AppContextValue = {
+  isHydrated: boolean
+
   // menu
   menu: MenuItem[]
   toggleAvailability: (id: string) => void
@@ -26,6 +28,7 @@ type AppContextValue = {
   getBill: (id: string) => Bill | undefined
   createBill: () => Bill
   addBill: (bill: Bill) => void
+  setActiveBillId: (id: string | null) => void
   requestCheckout: (id: string) => void
   confirmPayment: (id: string) => void
 
@@ -123,7 +126,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [cart],
   )
 
+  const setActiveBillId = useCallback((id: string | null) => {
+    setSession((s) => (s.activeBillId === id ? s : { ...s, activeBillId: id }))
+  }, [])
+
   const value: AppContextValue = {
+    isHydrated: hydrated,
+
     menu,
     toggleAvailability: (id) =>
       setMenu((m) => m.map((it) => (it.id === id ? { ...it, available: !it.available } : it))),
@@ -155,6 +164,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSession((s) => ({ ...s, activeBillId: bill.id }))
       setCart([])
     },
+    setActiveBillId,
     requestCheckout: (id) =>
       setBills((b) => b.map((bill) => (bill.id === id ? { ...bill, status: "processing" } : bill))),
     confirmPayment: (id) =>
@@ -177,6 +187,4 @@ export function useApp() {
   if (!ctx) throw new Error("useApp must be used within AppProvider")
   return ctx
 }
-
-
 
