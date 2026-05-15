@@ -9,6 +9,8 @@ type SessionState = {
   activeBillId: string | null
 }
 
+type TableSession = SessionState["table"]
+
 type AppContextValue = {
   isHydrated: boolean
 
@@ -34,6 +36,7 @@ type AppContextValue = {
 
   // session
   session: SessionState
+  setTable: (table: TableSession) => void
   resetSession: () => void
 }
 
@@ -130,6 +133,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setSession((s) => (s.activeBillId === id ? s : { ...s, activeBillId: id }))
   }, [])
 
+  const setTable = useCallback((table: TableSession) => {
+    setCart([])
+    setSession((s) =>
+      s.table._id === table._id && s.table.name === table.name && s.activeBillId === null
+        ? s
+        : { table, activeBillId: null },
+    )
+  }, [])
+
   const value: AppContextValue = {
     isHydrated: hydrated,
 
@@ -173,6 +185,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       ),
 
     session,
+    setTable,
     resetSession: () => {
       setCart([])
       setSession({ table: session.table?.name ? session.table : DEFAULT_TABLE, activeBillId: null })
@@ -187,4 +200,3 @@ export function useApp() {
   if (!ctx) throw new Error("useApp must be used within AppProvider")
   return ctx
 }
-

@@ -19,7 +19,9 @@ export function BillStatusGuard() {
   const { isHydrated, session, setActiveBillId } = useApp()
 
   useEffect(() => {
-    if (!isHydrated || !session.table?._id || pathname === "/payment") return
+    if (!isHydrated || !session.table?._id || pathname === "/payment" || pathname.startsWith("/table/")) {
+      return
+    }
 
     let cancelled = false
 

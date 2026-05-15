@@ -82,7 +82,74 @@ go build -o bar-pos-server .
 
 ---
 
-## 4. API Reference
+## 4. Frontend Page Reference
+
+The frontend is a Next.js app in `Frontend/`. It uses `NEXT_PUBLIC_API_URL` when set, otherwise it calls `http://localhost:8080`.
+
+### Main Entry
+
+| Path | File | Purpose |
+|---|---|---|
+| `/` | `Frontend/app/page.tsx` | Landing page with two entry cards: customer and cashier. Customer goes to `/menu`; cashier goes to `/store/menu`. |
+
+### Customer Pages
+
+| Path | File | Purpose |
+|---|---|---|
+| `/table/:id` | `Frontend/app/(customer)/table/[id]/page.tsx` | Table-specific entry URL for QR codes. Fetches `GET /tables/:id`, saves the table in session, then redirects to `/menu`. Example: `/table/T1`, `/table/T2`, `/table/T3`. |
+| `/menu` | `Frontend/app/(customer)/menu/page.tsx` | Customer menu list for the current table. Shows available menu items and the current cart summary. |
+| `/menu/:id` | `Frontend/app/(customer)/menu/[id]/page.tsx` | Menu item detail page. Fetches `GET /menu/:id`, shows option groups, allows one choice per option topic, and adds the item to cart. |
+| `/cart` | `Frontend/app/(customer)/cart/page.tsx` | Customer cart review. Sends orders with `POST /orders`; stores returned `billsId`; redirects to `/bills`. If the bill is already processing, redirects to `/payment`. |
+| `/bills` | `Frontend/app/(customer)/bills/page.tsx` | Shows the active bill for the current table using `GET /bills/:tableId`. Customer can check out, which calls `PATCH /bills/user/:id` and moves the bill to `processing`. |
+| `/payment` | `Frontend/app/(customer)/payment/page.tsx` | Waiting-for-payment screen. Polls `GET /bills/:tableId`; when cashier marks the bill paid, the customer session resets and returns to `/menu`. |
+
+### Customer Table Flow
+
+Use table URLs for QR codes instead of a fixed table:
+
+| Table | Customer URL |
+|---|---|
+| `T1` / Bar Seat 1 | `/table/T1` |
+| `T2` / Bar Seat 2 | `/table/T2` |
+| `T3` / Booth A (VIP) | `/table/T3` |
+
+When a customer opens `/table/:id`, the frontend selects that table from MongoDB. The shared customer layout also runs `BillStatusGuard`, which checks `GET /bills/:tableId` on customer pages. If that table has an active bill with status `processing`, the customer is sent to `/payment`.
+
+If `/table/T2` shows "Invalid table", check the backend route directly:
+
+```text
+http://localhost:8080/tables/T2
+```
+
+Expected response:
+
+```json
+{
+  "id": "T2",
+  "name": "Bar Seat 2"
+}
+```
+
+Restart the backend after route changes. The backend table repository checks MongoDB collection `tables` first and then `table`, so either collection name can work.
+
+### Cashier Pages
+
+| Path | File | Purpose |
+|---|---|---|
+| `/store/menu` | `Frontend/app/store/menu/page.tsx` | Cashier menu-management page. Fetches all menu items with `GET /menu/store` and toggles availability with `PATCH /menu/:id`. |
+| `/store/bills` | `Frontend/app/store/bills/page.tsx` | Processing-bills page. Fetches `GET /bills/processing`, shows all bills waiting for payment, and confirms payment with `PATCH /bills/store/:id`. |
+| `/store/history` | `Frontend/app/store/history/page.tsx` | Paid-bill history page. Fetches `GET /bills/paid`, opens bill details in a popup, and can download a text receipt. |
+
+### Shared Frontend State
+
+| File | Responsibility |
+|---|---|
+| `Frontend/contexts/app-context.tsx` | Stores menu, cart, current table session, and active bill ID in local storage. Provides helpers like `setTable`, `setActiveBillId`, `clearCart`, and `resetSession`. |
+| `Frontend/components/customer/bill-status-guard.tsx` | Checks the current table's active bill on customer pages and redirects to `/payment` when status is `processing`. |
+
+---
+
+## 5. API Reference
 
 All endpoints return JSON.
 
@@ -131,6 +198,17 @@ Returns one menu item with its option groups and nested options.
       ]
     }
   ]
+}
+```
+
+### `GET /tables/:id`
+Returns one table document by table ID.
+
+**Response `200`**
+```json
+{
+  "id": "T1",
+  "name": "Bar Seat 1"
 }
 ```
 
@@ -329,7 +407,7 @@ Simple health check for the backend.
 
 ---
 
-## 5. MongoDB Indexes Created on Startup
+## 6. MongoDB Indexes Created on Startup
 
 | Collection | Index | Purpose |
 |---|---|---|
@@ -339,7 +417,7 @@ Simple health check for the backend.
 
 ---
 
-## 6. DB Query Count per Endpoint
+## 7. DB Query Count per Endpoint
 
 | Endpoint | DB Round-trips | Notes |
 |---|---|---|

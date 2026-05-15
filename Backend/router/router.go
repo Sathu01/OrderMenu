@@ -27,11 +27,13 @@ func SetupRouter(db *mongo.Database) *gin.Engine {
 	menuRepo := repository.NewMenuRepository(db)
 	billRepo := repository.NewBillRepository(db)
 	orderRepo := repository.NewOrderRepository(db)
+	tableRepo := repository.NewTableRepository(db)
 
 	// ── Handlers ────────────────────────────────────────────────────────────
 	menuHandler := handler.NewMenuHandler(menuRepo)
 	orderHandler := handler.NewOrderHandler(orderRepo, billRepo)
 	billHandler := handler.NewBillHandler(billRepo, orderRepo)
+	tableHandler := handler.NewTableHandler(tableRepo)
 
 	// ── Routes ──────────────────────────────────────────────────────────────
 	//
@@ -45,6 +47,7 @@ func SetupRouter(db *mongo.Database) *gin.Engine {
 	r.GET("/menu", menuHandler.GetAllMenus)
 	r.GET("/menu/store", menuHandler.GetAllMenusForStore)
 	r.GET("/menu/:id", menuHandler.GetMenuByID)
+	r.GET("/tables/:id", tableHandler.GetTableByID)
 	r.POST("/orders", orderHandler.CreateOrders)
 	r.GET("/bills/:id", billHandler.GetBillByTableID)
 	r.PATCH("/bills/user/:id", billHandler.ChangeStatusToProcessing)
