@@ -46,7 +46,10 @@ func SetupRouter(db *mongo.Database) *gin.Engine {
 	//
 	r.GET("/menu", menuHandler.GetAllMenus)
 	r.GET("/menu/store", menuHandler.GetAllMenusForStore)
+	r.POST("/menu", menuHandler.CreateMenu)
 	r.GET("/menu/:id", menuHandler.GetMenuByID)
+	r.PUT("/menu/:id", menuHandler.UpdateMenu)
+	r.DELETE("/menu/:id", menuHandler.ArchiveMenu)
 	r.GET("/tables/:id", tableHandler.GetTableByID)
 	r.POST("/orders", orderHandler.CreateOrders)
 	r.GET("/bills/:id", billHandler.GetBillByTableID)

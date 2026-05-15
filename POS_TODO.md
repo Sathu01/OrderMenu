@@ -44,12 +44,22 @@ Main stack:
 
 ### 1. Menu Management CRUD
 
-- [ ] Add create menu item API.
-- [ ] Add edit menu item API.
-- [ ] Add delete or archive menu item API.
-- [ ] Add store UI for adding/editing menu name, description, base price, image URL, category, option groups, and availability.
-- [ ] Validate category values on backend.
-- [ ] Add duplicate menu name warning.
+- [x] Add create menu item API.
+- [x] Add edit menu item API.
+- [x] Add delete or archive menu item API.
+- [x] Add store UI for adding/editing menu name, description, base price, image URL, category, option groups, and availability.
+- [x] Validate category values on backend.
+- [x] Add duplicate menu name warning.
+
+Completed notes:
+
+- `POST /menu` creates a menu item with the next numeric ID.
+- `PUT /menu/:id` updates editable menu fields.
+- `DELETE /menu/:id` archives the item instead of hard deleting it, preserving old bill history.
+- Backend validates categories against `Beverage` and `Snack`.
+- Backend rejects duplicate non-archived menu names with `409`.
+- Cashier menu page can create, edit, archive, search, and toggle availability.
+- Verified with `go test ./...`, `pnpm exec tsc --noEmit --incremental false`, and `pnpm build`.
 
 Why this matters:
 

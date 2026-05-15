@@ -36,6 +36,7 @@ type Menu struct {
 	Category    string  `bson:"category"    json:"category"`
 	Options     []int   `bson:"options"     json:"options"` // OptionsGroup IDs
 	Available   bool    `bson:"available"   json:"available"`
+	Archived    bool    `bson:"archived,omitempty" json:"archived,omitempty"`
 }
 
 // Bill tracks an open "tab" for a table.
