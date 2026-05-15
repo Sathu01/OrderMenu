@@ -64,6 +64,7 @@ export default function ProcessingBillsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [confirming, setConfirming] = useState<string | null>(null)
+  const [unconfirming, setUnconfirming] = useState<string | null>(null)
 
   const fetchBills = useCallback(async () => {
     try {
@@ -101,6 +102,21 @@ export default function ProcessingBillsPage() {
       toast.error("Failed to confirm payment. Please try again.")
     } finally {
       setConfirming(null)
+    }
+  }
+
+  async function handleUnconfirmBill(billId: string) {
+    setUnconfirming(billId)
+    try {
+      const res = await fetch(`${BASE}/bills/pending/${billId}`, { method: "PATCH" })
+      if (!res.ok) throw new Error("api error")
+      setBills((prev) => prev.filter((b) => b.bill.id !== billId))
+      setSelectedId(null)
+      toast.success(`Bill ${billId} moved back to pending`)
+    } catch {
+      toast.error("Failed to unconfirm bill. Please try again.")
+    } finally {
+      setUnconfirming(null)
     }
   }
 
@@ -227,11 +243,20 @@ export default function ProcessingBillsPage() {
                   </div>
                 </div>
 
-                <SheetFooter className="mt-4">
+                <SheetFooter className="mt-4 gap-2 sm:flex-col">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full"
+                    disabled={confirming === bill.id || unconfirming === bill.id}
+                    onClick={() => handleUnconfirmBill(bill.id)}
+                  >
+                    {unconfirming === bill.id ? "Unconfirming..." : "Unconfirm"}
+                  </Button>
                   <Button
                     size="lg"
                     className="w-full"
-                    disabled={confirming === bill.id}
+                    disabled={confirming === bill.id || unconfirming === bill.id}
                     onClick={() => handleConfirmPayment(bill.id)}
                   >
                     {confirming === bill.id

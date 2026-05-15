@@ -54,7 +54,9 @@ func SetupRouter(db *mongo.Database) *gin.Engine {
 
 	r.GET("/bills/processing", billHandler.GetProcessBills)
 	r.GET("/bills/paid", billHandler.GetPaidBills)
+	r.PATCH("/bills/pending/:id", billHandler.ChangeStatusToPending)
 	r.PATCH("/bills/store/:id", billHandler.ChangeStatusToPaid)
+	r.PATCH("/bills/store/:id/pending", billHandler.ChangeStatusToPending)
 	r.PATCH("/menu/:id", menuHandler.ChangeAvailableMenu)
 
 	// Health check — useful for Docker / K8s readiness probes.

@@ -60,7 +60,12 @@ function mapApiToBill(data: BillDetail, menu: ReturnType<typeof useApp>["menu"])
     tableNumber: data.bill.tableId,
     items,
     total,
-    status: data.bill.status === "paid" ? "paid" : "processing",
+    status:
+      data.bill.status === "paid"
+        ? "paid"
+        : data.bill.status === "processing"
+          ? "processing"
+          : "open",
     createdAt: new Date(data.bill.createDate).getTime(),
   }
 }
@@ -106,6 +111,12 @@ export default function PaymentPage() {
       return () => clearTimeout(t)
     }
   }, [billData?.status, resetSession, router])
+
+  useEffect(() => {
+    if (billData?.status === "open") {
+      router.replace("/bills")
+    }
+  }, [billData?.status, router])
 
   function downloadReceipt() {
     if (!billData) return

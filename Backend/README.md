@@ -137,7 +137,7 @@ Restart the backend after route changes. The backend table repository checks Mon
 | Path | File | Purpose |
 |---|---|---|
 | `/store/menu` | `Frontend/app/store/menu/page.tsx` | Cashier menu-management page. Fetches all menu items with `GET /menu/store` and toggles availability with `PATCH /menu/:id`. |
-| `/store/bills` | `Frontend/app/store/bills/page.tsx` | Processing-bills page. Fetches `GET /bills/processing`, shows all bills waiting for payment, and confirms payment with `PATCH /bills/store/:id`. |
+| `/store/bills` | `Frontend/app/store/bills/page.tsx` | Processing-bills page. Fetches `GET /bills/processing`, shows all bills waiting for payment, confirms payment with `PATCH /bills/store/:id`, and can unconfirm with `PATCH /bills/pending/:id`. |
 | `/store/history` | `Frontend/app/store/history/page.tsx` | Paid-bill history page. Fetches `GET /bills/paid`, opens bill details in a popup, and can download a text receipt. |
 
 ### Shared Frontend State
@@ -395,6 +395,21 @@ Changes a bill status to `paid`.
 }
 ```
 
+### `PATCH /bills/pending/:id`
+Changes a bill status back to `pending`.
+
+Use this when a customer tapped checkout by mistake and the cashier needs to unconfirm the processing bill.
+
+**Response `200`**
+```json
+{
+  "id": "B2",
+  "createDate": "2026-05-14T21:00:00Z",
+  "tableId": "T3",
+  "status": "pending"
+}
+```
+
 ### `GET /health`
 Simple health check for the backend.
 
@@ -432,5 +447,6 @@ Simple health check for the backend.
 | `GET /bills/paid` | 3N | for each bill: find orders → `$in` options |
 | `PATCH /bills/user/:id` | 2 | update bill → re-fetch updated document |
 | `PATCH /bills/store/:id` | 2 | update bill → re-fetch updated document |
+| `PATCH /bills/pending/:id` | 2 | update bill → re-fetch updated document |
 
 No N+1 queries anywhere — all enrichment uses `$in` batching.

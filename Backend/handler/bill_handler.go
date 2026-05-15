@@ -137,6 +137,23 @@ func (h *BillHandler) ChangeStatusToPaid(c *gin.Context) {
 	c.JSON(http.StatusOK, bill)
 }
 
+func (h *BillHandler) ChangeStatusToPending(c *gin.Context) {
+	billID := c.Param("id")
+	ctx := c.Request.Context()
+
+	bill, err := h.billRepo.UpdateStatusByID(ctx, billID, models.BillStatusPending)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusNotFound, gin.H{"error": "bill not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update bill status"})
+		return
+	}
+
+	c.JSON(http.StatusOK, bill)
+}
+
 // GetProcessBills returns every bill currently in the "processing" state
 // along with their enriched orders (options embedded).
 func (h *BillHandler) GetProcessBills(c *gin.Context) {
