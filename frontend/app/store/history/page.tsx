@@ -139,8 +139,8 @@ export default function BillHistoryPage() {
   const selected = paid.find(({ bill }) => bill.id === selectedId) ?? null
 
   return (
-    <main className="px-5 md:px-8 py-6 max-w-6xl">
-      <header className="mb-6 flex items-end justify-between gap-3">
+    <main className="px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+      <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Bill history</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -148,7 +148,7 @@ export default function BillHistoryPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="font-mono">
+          <Badge variant="secondary" className="h-10 rounded-lg px-3 font-mono">
             {paid.length} paid
           </Badge>
           <Button
@@ -165,7 +165,7 @@ export default function BillHistoryPage() {
         </div>
       </header>
 
-      <Card>
+      <Card className="overflow-hidden py-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -202,7 +202,7 @@ export default function BillHistoryPage() {
                       setSelectedId(bill.id)
                     }
                   }}
-                  className="cursor-pointer hover:bg-muted/50"
+                  className="cursor-pointer hover:bg-secondary/60"
                 >
                   <TableCell className="font-mono">{bill.id}</TableCell>
                   <TableCell>{bill.tableId}</TableCell>

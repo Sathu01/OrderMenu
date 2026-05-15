@@ -83,8 +83,8 @@ export default function MenuDetailPage() {
 
   if (!item) {
     return (
-      <main className="mx-auto max-w-2xl px-4 py-10">
-        <p>Item not found.</p>
+      <main className="mx-auto max-w-2xl px-4 py-10 app-surface min-h-svh">
+        <p className="font-semibold">Item not found.</p>
         <Button variant="link" onClick={() => router.push("/menu")}>
           Back to menu
         </Button>
@@ -121,23 +121,30 @@ export default function MenuDetailPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl pb-32">
-      <div className="relative aspect-[4/3] bg-muted">
+    <main className="mx-auto max-w-2xl pb-32 app-surface min-h-svh">
+      <div className="relative aspect-[4/3] bg-muted overflow-hidden">
         <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" priority />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/95 to-transparent" />
         <button
           type="button"
           onClick={() => router.back()}
           aria-label="Back"
-          className="absolute top-4 left-4 size-9 rounded-full bg-background/90 backdrop-blur flex items-center justify-center hover:bg-background"
+          className="absolute top-4 left-4 size-10 rounded-lg bg-card/90 border border-border/60 backdrop-blur flex items-center justify-center hover:bg-card shadow-sm"
         >
           <ChevronLeft className="size-5" />
         </button>
       </div>
 
       <div className="px-4 pt-5">
-        <h1 className="text-2xl font-semibold tracking-tight">{item.name}</h1>
-        <p className="text-muted-foreground mt-1 leading-relaxed">{item.description}</p>
-        <p className="mt-3 text-lg font-semibold text-primary">{formatPrice(item.price)}</p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-semibold tracking-tight">{item.name}</h1>
+            <p className="text-muted-foreground mt-1 leading-relaxed">{item.description}</p>
+          </div>
+          <p className="shrink-0 rounded-lg bg-primary/10 px-3 py-2 text-base font-bold tabular-nums text-primary">
+            {formatPrice(item.price)}
+          </p>
+        </div>
 
         <div className="mt-6 space-y-6">
           {item.optionGroups.map((group) => (
@@ -145,7 +152,7 @@ export default function MenuDetailPage() {
               <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
                 {group.name}
                 {group.required && (
-                  <span className="text-xs font-normal text-muted-foreground">Required</span>
+                  <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-muted-foreground">Required</span>
                 )}
               </h2>
 
@@ -162,7 +169,7 @@ export default function MenuDetailPage() {
                 {!group.required && (
                   <Label
                     htmlFor={`${group.id}-none`}
-                    className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3 cursor-pointer hover:border-primary has-[[data-state=checked]]:border-primary"
+                    className="flex items-center justify-between rounded-lg border border-border/80 bg-card px-4 py-3 cursor-pointer shadow-sm hover:border-primary has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
                   >
                     <div className="flex items-center gap-3">
                       <RadioGroupItem id={`${group.id}-none`} value={NO_OPTION_VALUE} />
@@ -175,7 +182,7 @@ export default function MenuDetailPage() {
                   <Label
                     key={c.id}
                     htmlFor={`${group.id}-${c.id}`}
-                    className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3 cursor-pointer hover:border-primary has-[[data-state=checked]]:border-primary"
+                    className="flex items-center justify-between rounded-lg border border-border/80 bg-card px-4 py-3 cursor-pointer shadow-sm hover:border-primary has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
                   >
                     <div className="flex items-center gap-3">
                       <RadioGroupItem id={`${group.id}-${c.id}`} value={c.id} />
@@ -194,13 +201,13 @@ export default function MenuDetailPage() {
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/70 bg-card/95 backdrop-blur-xl">
         <div className="mx-auto max-w-2xl px-4 py-3 flex items-center gap-3">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card p-1">
+          <div className="inline-flex items-center gap-2 rounded-lg border border-border bg-background p-1">
             <Button
               size="icon"
               variant="ghost"
-              className="rounded-full"
+              className="rounded-md"
               onClick={() => setQty((q) => Math.max(1, q - 1))}
               aria-label="Decrease quantity"
             >
@@ -212,7 +219,7 @@ export default function MenuDetailPage() {
             <Button
               size="icon"
               variant="ghost"
-              className="rounded-full"
+              className="rounded-md"
               onClick={() => setQty((q) => q + 1)}
               aria-label="Increase quantity"
             >

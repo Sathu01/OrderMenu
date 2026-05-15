@@ -107,8 +107,8 @@ export default function ProcessingBillsPage() {
   const selected = bills.find((b) => b.bill.id === selectedId) ?? null
 
   return (
-    <main className="px-5 md:px-8 py-6 max-w-6xl">
-      <header className="mb-6 flex items-end justify-between gap-3">
+    <main className="px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+      <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Processing bills</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -116,7 +116,7 @@ export default function ProcessingBillsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="font-mono">
+          <Badge variant="secondary" className="h-10 rounded-lg px-3 font-mono">
             {bills.length} active
           </Badge>
           <Button
@@ -131,7 +131,7 @@ export default function ProcessingBillsPage() {
       </header>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <Card key={i} className="p-4 animate-pulse space-y-3">
               <div className="flex justify-between">
@@ -148,7 +148,7 @@ export default function ProcessingBillsPage() {
           No bills waiting for payment.
         </Card>
       ) : (
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {bills.map(({ bill, orders }) => {
             const total = calcTotal(orders)
             const itemCount = calcItemCount(orders)
@@ -159,10 +159,10 @@ export default function ProcessingBillsPage() {
                   onClick={() => setSelectedId(bill.id)}
                   className="w-full text-left"
                 >
-                  <Card className="p-4 hover:border-primary transition-colors cursor-pointer">
+                  <Card className="p-4 hover:border-primary transition-all cursor-pointer hover:-translate-y-0.5 hover:shadow-md">
                     <div className="flex items-center justify-between">
                       <p className="font-mono text-sm text-muted-foreground">{bill.id}</p>
-                      <Badge>Table {bill.tableId}</Badge>
+                      <Badge className="rounded-md">Table {bill.tableId}</Badge>
                     </div>
                     <p className="mt-3 text-2xl font-semibold">{formatPrice(total)}</p>
                     <p className="mt-2 text-xs text-muted-foreground">

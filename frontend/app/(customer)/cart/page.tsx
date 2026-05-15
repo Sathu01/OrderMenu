@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { Trash2, ShoppingCart } from "lucide-react"
+import { Trash2, ShoppingCart, ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 import { useState } from "react"
 import { useApp } from "@/contexts/app-context"
@@ -56,15 +56,21 @@ export default function CartPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 pt-6 pb-36">
-      <header className="mb-5">
-        <h1 className="text-2xl font-semibold tracking-tight">Your cart</h1>
-        <p className="text-sm text-muted-foreground mt-1">Review before sending to the kitchen.</p>
+    <main className="min-h-svh app-surface">
+      <div className="mx-auto max-w-2xl px-4 pt-5 pb-36">
+      <header className="mb-5 flex items-center gap-3">
+        <Button variant="outline" size="icon" onClick={() => router.push("/menu")} aria-label="Back to menu">
+          <ArrowLeft className="size-4" />
+        </Button>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Your cart</h1>
+          <p className="text-sm text-muted-foreground mt-1">Review before sending to the kitchen.</p>
+        </div>
       </header>
 
       {cart.length === 0 ? (
         <Card className="p-10 text-center flex flex-col items-center gap-3">
-          <div className="size-12 rounded-full bg-muted text-muted-foreground flex items-center justify-center">
+          <div className="size-14 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
             <ShoppingCart className="size-5" />
           </div>
           <p className="text-muted-foreground">Your cart is empty.</p>
@@ -77,7 +83,7 @@ export default function CartPage() {
           <ul className="space-y-3">
             {cart.map((item) => (
               <li key={item.lineId}>
-                <Card className="p-4 flex items-start justify-between gap-3">
+            <Card className="p-4 flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <p className="font-semibold leading-tight">
@@ -112,12 +118,12 @@ export default function CartPage() {
             ))}
           </ul>
 
-          <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
+          <div className="mt-6 flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3 shadow-sm">
             <span className="text-muted-foreground">Total</span>
             <span className="text-xl font-semibold">{formatPrice(cartTotal)}</span>
           </div>
 
-          <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur pb-safe">
+          <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/70 bg-card/95 backdrop-blur-xl pb-safe">
             <div className="mx-auto max-w-2xl px-4 py-3">
               <Button size="lg" className="w-full" onClick={handleOrder} disabled={isSubmitting}>
                 {isSubmitting ? "Sending..." : `Send order · ${formatPrice(cartTotal)}`}
@@ -126,6 +132,7 @@ export default function CartPage() {
           </div>
         </>
       )}
+      </div>
     </main>
   )
 }

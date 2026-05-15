@@ -52,7 +52,7 @@ export default function TableEntryPage() {
   }, [router, setTable, tableId])
 
   return (
-    <main className="min-h-svh flex items-center justify-center px-4 bg-background">
+    <main className="min-h-svh flex items-center justify-center px-4 app-surface">
       <Card className="w-full max-w-sm p-6 text-center">
         {error ? (
           <>
@@ -64,7 +64,9 @@ export default function TableEntryPage() {
           </>
         ) : (
           <div className="flex flex-col items-center gap-3">
-            <Loader2 className="size-6 animate-spin text-primary" />
+            <div className="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <Loader2 className="size-6 animate-spin" />
+            </div>
             <h1 className="text-lg font-semibold">Loading table {tableId}</h1>
             <p className="text-sm text-muted-foreground">Preparing your menu...</p>
           </div>

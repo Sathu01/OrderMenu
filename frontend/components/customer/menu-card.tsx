@@ -17,9 +17,9 @@ export function MenuCard({ item }: { item: MenuItem }) {
       disabled={disabled}
       onClick={() => !disabled && router.push(`/menu/${item.id}`)}
       className={cn(
-        "group relative flex flex-col rounded-2xl overflow-hidden bg-card text-left w-full",
-        "shadow-sm border border-border/50",
-        "transition-transform active:scale-[0.97]",
+        "group relative flex flex-col rounded-lg overflow-hidden bg-card text-left w-full",
+        "shadow-sm shadow-foreground/5 border border-border/70",
+        "transition-all active:scale-[0.98] hover:-translate-y-0.5 hover:shadow-md",
         disabled ? "opacity-50 pointer-events-none" : "",
       )}
       aria-label={`${item.name}, ${formatPrice(item.price)}`}
@@ -35,7 +35,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
         />
 
         {/* Orange price badge — top-left */}
-        <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-lg shadow-md tabular-nums leading-none">
+        <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-md shadow-md tabular-nums leading-none">
           {formatPrice(item.price)}
         </span>
 
@@ -43,7 +43,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
         {!disabled && (
           <span
             aria-hidden
-            className="absolute bottom-2 right-2 size-9 rounded-xl bg-accent text-accent-foreground flex items-center justify-center shadow-md transition-transform group-hover:scale-110 group-active:scale-95"
+            className="absolute bottom-2 right-2 size-9 rounded-lg bg-accent text-accent-foreground flex items-center justify-center shadow-md transition-transform group-hover:scale-105 group-active:scale-95"
           >
             <Plus className="size-5 stroke-[2.5]" />
           </span>
@@ -60,7 +60,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
       </div>
 
       {/* Name below image */}
-      <div className="px-2.5 py-2">
+      <div className="px-3 py-2.5">
         <p className="text-sm font-semibold leading-snug line-clamp-2 text-foreground">
           {item.name}
         </p>

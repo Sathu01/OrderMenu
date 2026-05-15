@@ -20,11 +20,11 @@ export function StoreSidebar() {
   return (
     <aside
       aria-label="Cashier navigation"
-      className="md:w-64 md:min-h-svh md:border-r md:border-border border-b border-border bg-card md:bg-card/50"
+      className="md:w-72 md:min-h-svh md:border-r md:border-border/70 border-b border-border/70 bg-card/90 backdrop-blur-xl"
     >
-      <div className="px-5 py-5 flex items-center gap-2">
-        <div className="size-8 rounded-md bg-primary/10 text-primary flex items-center justify-center">
-          <ChefHat className="size-4" />
+      <div className="px-5 py-5 flex items-center gap-3">
+        <div className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+          <ChefHat className="size-5" />
         </div>
         <div>
           <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground leading-none">
@@ -34,7 +34,7 @@ export function StoreSidebar() {
         </div>
       </div>
       <nav className="px-3 pb-3 md:pb-5">
-        <ul className="grid grid-cols-3 md:grid-cols-1 gap-1">
+        <ul className="grid grid-cols-3 md:grid-cols-1 gap-1.5">
           {links.map(({ href, label, icon: Icon, badgeKey }) => {
             const active = pathname?.startsWith(href)
             const badge = badgeKey === "processing" ? processingCount : 0
@@ -43,16 +43,21 @@ export function StoreSidebar() {
                 <Link
                   href={href}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+                    "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
                     active
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted",
+                      ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary",
                   )}
                 >
                   <Icon className="size-4 shrink-0" aria-hidden />
                   <span className="truncate">{label}</span>
                   {badge > 0 && (
-                    <span className="ml-auto min-w-5 h-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[11px] font-semibold flex items-center justify-center">
+                    <span
+                      className={cn(
+                        "ml-auto min-w-5 h-5 px-1.5 rounded-full text-[11px] font-semibold flex items-center justify-center",
+                        active ? "bg-primary-foreground text-primary" : "bg-primary text-primary-foreground",
+                      )}
+                    >
                       {badge}
                     </span>
                   )}

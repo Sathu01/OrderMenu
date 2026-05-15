@@ -132,8 +132,8 @@ export default function PaymentPage() {
 
   if (isLoading) {
     return (
-      <main className="mx-auto max-w-2xl px-4 py-20 flex flex-col items-center gap-4">
-        <div className="size-16 rounded-full bg-muted flex items-center justify-center">
+      <main className="min-h-svh app-surface mx-auto max-w-2xl px-4 py-20 flex flex-col items-center gap-4">
+        <div className="size-16 rounded-lg bg-card border border-border flex items-center justify-center shadow-sm">
           <Receipt className="size-7 text-muted-foreground animate-pulse" />
         </div>
         <p className="text-muted-foreground text-sm">Loading bill…</p>
@@ -143,7 +143,7 @@ export default function PaymentPage() {
 
   if (!billData) {
     return (
-      <main className="mx-auto max-w-2xl px-4 py-10 text-center">
+      <main className="min-h-svh app-surface mx-auto max-w-2xl px-4 py-10 text-center">
         <p className="text-muted-foreground">No bill in progress.</p>
         <Button variant="link" onClick={() => router.push("/menu")}>
           Back to menu
@@ -155,11 +155,11 @@ export default function PaymentPage() {
   const isPaid = billData.status === "paid"
 
   return (
-    <main className="mx-auto max-w-2xl px-4 pt-10 pb-20">
+    <main className="min-h-svh app-surface mx-auto max-w-2xl px-4 pt-10 pb-20">
       <Card className="p-6 flex flex-col items-center text-center gap-3">
         {isPaid ? (
           <>
-            <div className="size-12 rounded-full bg-accent/15 text-accent flex items-center justify-center">
+            <div className="size-14 rounded-lg bg-accent/15 text-accent flex items-center justify-center">
               <svg viewBox="0 0 24 24" fill="none" className="size-6" aria-hidden>
                 <path d="M5 12l5 5L20 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -169,8 +169,10 @@ export default function PaymentPage() {
           </>
         ) : (
           <>
-            <Loader2 className="size-8 text-primary animate-spin" aria-hidden />
-            <h1 className="text-xl font-semibold">Waiting for cashier…</h1>
+            <div className="size-14 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <Loader2 className="size-7 animate-spin" aria-hidden />
+            </div>
+            <h1 className="text-xl font-semibold">Waiting for cashier...</h1>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
               Please bring this screen to the counter or wait at your table. The cashier will confirm your
               payment shortly.

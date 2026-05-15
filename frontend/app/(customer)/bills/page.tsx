@@ -102,14 +102,16 @@ export default function BillsPage() {
   const total = billData?.total ?? 0
 
   return (
-    <div className="flex flex-col min-h-svh bg-background">
+    <div className="flex flex-col min-h-svh app-surface">
 
       {/* Header */}
-      <header className="sticky top-0 z-20 bg-background border-b border-border">
-        <div className="mx-auto max-w-2xl px-4 h-14 flex items-center gap-2">
-          <UtensilsCrossed className="size-5 text-primary" aria-hidden />
-          <h1 className="flex-1 text-base font-semibold">Ordered Items</h1>
-          <span className="text-xs font-mono bg-secondary px-2 py-1 rounded-md text-secondary-foreground">
+      <header className="sticky top-0 z-20 bg-background/90 border-b border-border/70 backdrop-blur-xl">
+        <div className="mx-auto max-w-2xl px-4 h-16 flex items-center gap-3">
+          <span className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+            <UtensilsCrossed className="size-5" aria-hidden />
+          </span>
+          <h1 className="flex-1 text-lg font-semibold">Ordered items</h1>
+          <span className="text-xs font-mono bg-card border border-border px-2.5 py-1.5 rounded-md text-muted-foreground">
             Table {session.table?.name ?? "Unknown"}
           </span>
         </div>
@@ -119,14 +121,14 @@ export default function BillsPage() {
       <main className="flex-1 mx-auto w-full max-w-2xl px-4 pt-4 pb-40">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="size-16 rounded-full bg-muted flex items-center justify-center">
+            <div className="size-16 rounded-lg bg-card border border-border flex items-center justify-center shadow-sm">
               <Receipt className="size-7 text-muted-foreground animate-pulse" />
             </div>
             <p className="text-muted-foreground text-sm">Loading bill...</p>
           </div>
         ) : !billData ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="size-16 rounded-full bg-muted flex items-center justify-center">
+            <div className="size-16 rounded-lg bg-card border border-border flex items-center justify-center shadow-sm">
               <Receipt className="size-7 text-muted-foreground" />
             </div>
             <p className="text-muted-foreground text-sm text-center">
@@ -175,7 +177,7 @@ export default function BillsPage() {
       </main>
 
       {/* Sticky bottom — summary + two action buttons */}
-      <div className="fixed bottom-0 inset-x-0 z-30 bg-card border-t border-border pb-safe">
+      <div className="fixed bottom-0 inset-x-0 z-30 bg-card/95 border-t border-border/70 backdrop-blur-xl pb-safe">
         <div className="mx-auto max-w-2xl px-4">
 
           {/* Summary row */}
@@ -196,7 +198,7 @@ export default function BillsPage() {
             <button
               type="button"
               onClick={() => router.push("/menu")}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl border-2 border-border bg-background px-4 h-12 text-sm font-semibold text-foreground transition-colors active:bg-muted"
+              className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 h-12 text-sm font-semibold text-foreground shadow-sm transition-colors active:bg-muted"
             >
               <Plus className="size-4" aria-hidden />
               Order Food
@@ -208,7 +210,7 @@ export default function BillsPage() {
                 <AlertDialogTrigger asChild>
                   <button
                     type="button"
-                    className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground px-4 h-12 text-sm font-semibold shadow-sm shadow-primary/30 transition-transform active:scale-[0.97]"
+                    className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 h-12 text-sm font-semibold shadow-sm shadow-primary/25 transition-transform active:scale-[0.98]"
                   >
                     <Receipt className="size-4" aria-hidden />
                     Check Bill
@@ -261,5 +263,4 @@ export default function BillsPage() {
     </div>
   )
 }
-
 

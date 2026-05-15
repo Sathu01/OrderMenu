@@ -80,28 +80,29 @@ export default function StoreMenuPage() {
   }, [items, query])
 
   return (
-    <main className="px-5 md:px-8 py-6 max-w-6xl">
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Menu management</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Toggle items on or off the live customer menu.
-        </p>
+    <main className="px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+      <header className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Menu management</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Toggle items on or off the live customer menu.
+          </p>
+        </div>
+        <div className="relative w-full max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search items, categories..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="h-11 pl-9 bg-card"
+            aria-label="Search menu"
+          />
+        </div>
       </header>
 
-      <div className="relative mb-5 max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search items, categories…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="pl-9"
-          aria-label="Search menu"
-        />
-      </div>
-
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <Card key={i} className="overflow-hidden animate-pulse">
               <div className="aspect-[16/10] bg-muted" />
@@ -113,11 +114,11 @@ export default function StoreMenuPage() {
           ))}
         </div>
       ) : (
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map((item) => (
             <Card
               key={item.id}
-              className={`overflow-hidden flex flex-col transition-opacity ${item.available ? "" : "opacity-60"}`}
+              className={`overflow-hidden flex flex-col transition-all hover:-translate-y-0.5 hover:shadow-md ${item.available ? "" : "opacity-60"}`}
             >
               <div className="relative aspect-[16/10] bg-muted">
                 <Image

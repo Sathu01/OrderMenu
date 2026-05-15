@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 
 export default function HomePage() {
   return (
-    <main className="min-h-svh flex flex-col items-center justify-center px-6 py-16 bg-background">
+    <main className="min-h-svh flex flex-col items-center justify-center px-6 py-16 app-surface">
       <div className="max-w-2xl w-full">
         <header className="text-center mb-10">
           <p className="text-sm font-mono uppercase tracking-widest text-muted-foreground mb-2">
@@ -21,7 +21,7 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Link href="/menu" aria-label="Enter customer view">
-            <Card className="p-6 hover:border-primary transition-colors h-full flex flex-col gap-4">
+            <Card className="p-6 hover:border-primary transition-all hover:-translate-y-0.5 hover:shadow-md h-full flex flex-col gap-4">
               <div className="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                 <ShoppingBag className="size-6" />
               </div>
@@ -35,7 +35,7 @@ export default function HomePage() {
           </Link>
 
           <Link href="/store/menu" aria-label="Enter cashier view">
-            <Card className="p-6 hover:border-primary transition-colors h-full flex flex-col gap-4">
+            <Card className="p-6 hover:border-primary transition-all hover:-translate-y-0.5 hover:shadow-md h-full flex flex-col gap-4">
               <div className="size-12 rounded-lg bg-accent/15 text-accent flex items-center justify-center">
                 <ChefHat className="size-6" />
               </div>
